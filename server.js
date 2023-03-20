@@ -8,7 +8,7 @@ const app = express();
 
 const db = mySQL.createConnection(
     {
-        host: 'localhost',
+        host: '127.0.0.1',
         // MySQL username,
         user: 'root',
         // MySQL password
@@ -18,15 +18,19 @@ const db = mySQL.createConnection(
     console.log(`Connected to the employee_db database.`)
 );
 
-// Query database
-db.query('SELECT * FROM department', function (err, results) {
-    try {
-        //   console.log(results);
-        console.log('Made it to query');
-    } catch (err) {
-        console.error(err.message);
-    }
+//Promise used 
+const viewAllDepartments = async () => {
+    const data = await new Promise ((resolve, reject) => {
+    db.query('SELECT * FROM department', (err, results) => {
+        if (err) {
+            reject(err)
+        } else {
+            resolve(results)
+        }
+    });
 });
+console.table(data);
+};
 
 // Default response for any other request (Not Found)
 app.use((req, res) => {
@@ -70,7 +74,7 @@ const initialPrompt = () => {
                     console.log('I chose Add Role');
                     break;
                 case 'View All Departments':
-                    // getDepartments()
+                    viewAllDepartments()
                     break;
             }
         });
