@@ -42,8 +42,14 @@ const addEmployee = () => {
         if (err) {
             reject (err)
         } else {
+            let employeeArray = results.map((obj) => {
+                return {
+                  value: obj.id,
+                  name: obj.title
+                };
+            });
             // resolve(results)
-            console.log(results);
+            console.log(employeeArray);
         }
     })
     
