@@ -18,7 +18,7 @@ const db = mySQL.createConnection(
     console.log(`Connected to the employee_db database.`)
 );
 
-//Promise used 
+//The function will return a Promise that will resolve with the result of the function when it completes.
 const viewAllDepartments = async () => {
     const data = await new Promise ((resolve, reject) => {
     db.query('SELECT * FROM department', (err, results) => {
@@ -31,6 +31,24 @@ const viewAllDepartments = async () => {
 });
 console.table(data);
 };
+
+//Add Employee
+const addEmployee = () => {
+    // const data = await new Promise (())
+    //first name, lastname, role, manager
+    // inquirer.prompt
+    //show role and id to pick
+      db.query('SELECT id, title FROM roles', (err, results) => {
+        if (err) {
+            reject (err)
+        } else {
+            // resolve(results)
+            console.log(results);
+        }
+    })
+    
+
+}
 
 // Default response for any other request (Not Found)
 app.use((req, res) => {
@@ -61,7 +79,8 @@ const initialPrompt = () => {
                 case 'View All Employees':
                     // viewAllEmployees();
                     break;
-                case 'Add Employees':
+                case 'Add Employee':
+                    addEmployee();
                     console.log('I chose add employees');
                     break;
                 case 'Update Employee Role':
