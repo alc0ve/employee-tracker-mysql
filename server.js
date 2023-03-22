@@ -143,7 +143,7 @@ const viewAllRoles = async () => {
 //Add Roles
 const addRole = () => {
     //show id and department name
-    db.query("SELECT id, dep_name FROM department", (err, results) => {
+    db.query("SELECT id, dep_name FROM department", async (err, results) => {
         if (err) {
             console.log(err);
         } else {
@@ -154,7 +154,43 @@ const addRole = () => {
                 };
             });
             console.log(deptArray);
-        };
+            //prompts for adding role
+            await inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'roleTitle',
+                    message: 'What Role would you like to add?',
+                },
+                {
+                    type: 'input',
+                    name: 'roleSalary',
+                    message: 'What is the salary of the Role?',
+                },
+                {
+                    type: 'list',
+                    name: 'roleDept',
+                    message: 'What is the Department for the Role?',
+                    choices: deptArray,
+                },
+            ])
+                //using answers put in
+                .then((answers) => {
+                    const title = answers.roleTitle;
+                    const salary = answers.roleSalary;
+                    const department = answers.roleDept;
+                    db.query(`INSERT INTO roles (title, salary, department_id) VALUES ('${title}', ${salary}, ${department})`,
+                        function (err, results) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log('');
+                                console.log('ROLE ADDED'.bold.brightCyan);
+                                console.log('');
+                            }
+                        });
+                    initialPrompt();
+                });
+        }
     });
 }
 
