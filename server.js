@@ -1,24 +1,14 @@
 const inquirer = require('inquirer');
-const express = require('express');
+// const express = require('express');
 const mySQL = require('mysql2');
 const cTable = require('console.table');
 const colors = require('colors');
-const sequelize = require('./config/connection');
+const figlet = require('figlet');
+const { query } = require('./config/connection');
+const db = require('./config/connection');
 
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-const db = mySQL.createConnection(
-    {
-        host: '127.0.0.1',
-        // MySQL username,
-        user: 'root',
-        // MySQL password
-        password: 'Password1',
-        database: 'employee_db'
-    },
-    console.log(`Connected to the employee_db database.`.brightGreen)
-);
+// const PORT = process.env.PORT || 3001;
+// const app = express();
 
 //View All Employees
 const viewAllEmployees = async () => {
@@ -59,7 +49,7 @@ const addEmployee = () => {
     //show role and id to pick
     db.query("SELECT id, title FROM roles", (err, results) => {
         if (err) {
-            reject(err)
+            console.log(err);
         } else {
             let employeeArray = results.map((obj) => {
                 return {
@@ -73,7 +63,7 @@ const addEmployee = () => {
             //query to get manager name and id
             db.query("SELECT manager_id, first_name, last_name FROM employees", async (err, results) => {
                 if (err) {
-                    reject(err)
+                    console.log(err);
                 } else {
                     let managerArray = results.map((obj) => {
                         return {
@@ -176,6 +166,13 @@ const viewAllDepartments = async () => {
 
 //Add Departments
 
+//Quit application function
+const quit = () => {
+    console.log('');
+    console.log('Bye'.bold.brightRed);
+    console.log('');
+}
+
 //prompts application start
 const initialPrompt = () => {
     inquirer.prompt({
@@ -217,6 +214,10 @@ const initialPrompt = () => {
                 case 'View All Departments':
                     viewAllDepartments()
                     break;
+                default:
+                    db.end();
+                    quit();
+                    process.exit();
             }
         });
 };
@@ -224,15 +225,15 @@ const initialPrompt = () => {
 initialPrompt();
 
 // Default response for any other request (Not Found)
-app.use((req, res) => {
-    res.status(404).end();
-});
+// app.use((req, res) => {
+//     res.status(404).end();
+// });
 
 // app.listen(PORT, () => {
 //     console.log(`Server running on port ${PORT}`);
 // });
 
 // turn on connection to db and server
-sequelize.sync({ force: false }).then(() => {
-    app.listen(PORT, () => console.log(`Now listening on ${PORT}`));
-  });
+// sequelize.sync({ force: false }).then(() => {
+//     app.listen(PORT, () => console.log(`Now listening on ${PORT}`));
+//   });
