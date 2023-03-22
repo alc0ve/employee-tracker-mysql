@@ -1,14 +1,10 @@
 const inquirer = require('inquirer');
-// const express = require('express');
 const mySQL = require('mysql2');
 const cTable = require('console.table');
 const colors = require('colors');
 const figlet = require('figlet');
 const { query } = require('./config/connection');
 const db = require('./config/connection');
-
-// const PORT = process.env.PORT || 3001;
-// const app = express();
 
 //View All Employees
 const viewAllEmployees = async () => {
@@ -45,7 +41,6 @@ ORDER BY
 
 //Add Employee
 const addEmployee = () => {
-    //first name, lastname, role, manager
     //show role and id to pick
     db.query("SELECT id, title FROM roles", (err, results) => {
         if (err) {
@@ -166,6 +161,29 @@ const viewAllDepartments = async () => {
 };
 
 //Add Departments
+const addDepartment = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'Which Department would you like to Add?',
+            name: 'department',
+        },
+    ])
+        .then((answers) => {
+          const department = answers.department;
+          const deptQuery = `INSERT INTO department (dep_name) VALUES ('${department}')`;
+          db.query(deptQuery, function (err, results) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log('');
+              console.log('DEPARTMENT ADDED'.bold.brightCyan);
+              console.log('');
+            }
+          });
+          initialPrompt();
+        });
+}
 
 //Quit application function
 const quit = () => {
@@ -214,6 +232,9 @@ const initialPrompt = () => {
                     break;
                 case 'View All Departments':
                     viewAllDepartments()
+                    break;
+                case 'Add Department':
+                    addDepartment()
                     break;
                 default:
                     //disconnects database connection
