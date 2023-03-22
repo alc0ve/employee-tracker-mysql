@@ -3,6 +3,7 @@ const express = require('express');
 const mySQL = require('mysql2');
 const cTable = require('console.table');
 const colors = require('colors');
+const sequelize = require('./config/connection');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -223,6 +224,11 @@ app.use((req, res) => {
     res.status(404).end();
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// app.listen(PORT, () => {
+//     console.log(`Server running on port ${PORT}`);
+// });
+
+// turn on connection to db and server
+sequelize.sync({ force: false }).then(() => {
+    app.listen(PORT, () => console.log(`Now listening on ${PORT}`));
+  });
