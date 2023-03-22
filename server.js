@@ -53,7 +53,6 @@ const addEmployee = () => {
                     name: obj.title
                 };
             });
-            // resolve(results)
             // console.log(employeeArray);
             //query to get manager name and id
             db.query("SELECT manager_id, first_name, last_name FROM employees", async (err, results) => {
@@ -142,6 +141,22 @@ const viewAllRoles = async () => {
 };
 
 //Add Roles
+const addRole = () => {
+    //show id and department name
+    db.query("SELECT id, dep_name FROM department", (err, results) => {
+        if (err) {
+            console.log(err);
+        } else {
+            let deptArray = results.map((obj) => {
+                return {
+                    value: obj.id,
+                    name: obj.dep_name
+                };
+            });
+            console.log(deptArray);
+        };
+    });
+}
 
 //The function will return a Promise that will resolve with the result of the function when it completes.
 //View All Departments
@@ -176,9 +191,9 @@ const addDepartment = () => {
             if (err) {
               console.log(err);
             } else {
-              console.log('');
-              console.log('DEPARTMENT ADDED'.bold.brightCyan);
-              console.log('');
+                console.log('');
+                console.log('DEPARTMENT ADDED'.bold.brightCyan);
+                console.log('');
             }
           });
           initialPrompt();
@@ -218,17 +233,14 @@ const initialPrompt = () => {
                     break;
                 case 'Add Employee':
                     addEmployee();
-                    console.log('I chose add employees');
                     break;
                 case 'Update Employee Role':
-                    console.log('I chose Update Employee Role');
                     break;
                 case 'View All Roles':
                     viewAllRoles();
-                    console.log('I chose View All Roles');
                     break;
                 case 'Add Role':
-                    console.log('I chose Add Role');
+                    addRole();
                     break;
                 case 'View All Departments':
                     viewAllDepartments()
