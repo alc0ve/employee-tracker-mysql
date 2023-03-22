@@ -107,14 +107,15 @@ const addEmployee = () => {
                             // console.log(first, last, role, manager);
                             const addEmployeeQuery = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
                              VALUES ('${first}', '${last}', ${role}, ${manager})`;
-                            db.query(addEmployeeQuery, async function (err, results) {
+                            db.query(addEmployeeQuery, function (err, results) {
                                 if (err) {
                                     console.log(err);
+                                } else {
+                                    console.log('');
+                                    console.log('EMPLOYEE ADDED'.bold.brightCyan);
+                                    console.log('');
                                 }
                             });
-                            console.log('');
-                            console.log('EMPLOYEE ADDED'.bold.brightCyan);
-                            console.log('');
                             initialPrompt();
                         });
                 }
@@ -215,25 +216,36 @@ const initialPrompt = () => {
                     viewAllDepartments()
                     break;
                 default:
+                    //disconnects database connection
                     db.end();
                     quit();
+                    //terminates node
                     process.exit();
             }
         });
 };
 
-initialPrompt();
 
-// Default response for any other request (Not Found)
-// app.use((req, res) => {
-//     res.status(404).end();
-// });
+//header of app with app start function called
+db.connect((err) => {
+    if (err) {
+      throw err;
+    }
+    console.log(
+      colors.gray(
+        `==========================================================================`
+      )
+    );
+    console.log(``);
+    console.log(colors.rainbow(figlet.textSync('            Employee')));
+    console.log(colors.rainbow(figlet.textSync('                Manager')));
+    console.log(``);
+    console.log(
+      colors.gray(
+        `==========================================================================`
+      )
+    );
+    console.log(``);
+    initialPrompt();
+  });
 
-// app.listen(PORT, () => {
-//     console.log(`Server running on port ${PORT}`);
-// });
-
-// turn on connection to db and server
-// sequelize.sync({ force: false }).then(() => {
-//     app.listen(PORT, () => console.log(`Now listening on ${PORT}`));
-//   });
