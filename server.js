@@ -114,7 +114,7 @@ const addEmployee = () => {
                             const last = answers.lastName;
                             const role = answers.employeeRole;
                             const manager = answers.manager;
-                            console.log(first, last, role, manager);
+                            // console.log(first, last, role, manager);
                             const addEmployeeQuery = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
                              VALUES ('${first}', '${last}', ${role}, ${manager})`;
                             db.query(addEmployeeQuery, async function (err, results) {
@@ -138,7 +138,11 @@ const addEmployee = () => {
 //View All Roles
 const viewAllRoles = async () => {
     const data = await new Promise((resolve, reject) => {
-        db.query("SELECT id, title, department_id AS 'department', salary FROM roles", (err, results) => {
+        //specify id and title with table (roles) bc thrown error says 'ambiguous' column in field list
+        db.query(`SELECT roles.id, roles.title, department.dep_name AS 'department', salary 
+        FROM roles 
+        JOIN department 
+        ON roles.department_id = department.id`, (err, results) => {
             if (err) {
                 reject(err)
             } else {
