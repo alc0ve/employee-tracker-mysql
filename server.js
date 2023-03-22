@@ -20,11 +20,40 @@ const db = mySQL.createConnection(
 );
 
 //View All Employees
+const viewAllEmployees = async () => {
+    //long query-- saved to variable to make it easier to read
+    const allEmployeesQuery = `SELECT
+  employees.id,
+  employees.first_name,
+  employees.last_name,
+  roles.title,
+  department.dep_name AS 'department',
+  roles.salary,
+  CONCAT(manager.first_name, ' ', manager.last_name) AS 'manager'
+FROM
+  employees
+  JOIN roles ON employees.role_id = roles.id
+  JOIN department ON roles.department_id = department.id
+  LEFT JOIN employees AS manager ON employees.manager_id = manager.id
+ORDER BY
+  employees.id ASC;`
 
+    const data = await new Promise((resolve, reject) => {
+        db.query(allEmployeesQuery, (err, results) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve(results)
+            }
+        });
+    });
+    console.log('');
+    console.table(data);
+    initialPrompt();
+}
 
 //Add Employee
 const addEmployee = () => {
-    // const data = await new Promise (())
     //first name, lastname, role, manager
     //show role and id to pick
     db.query("SELECT id, title FROM roles", (err, results) => {
@@ -86,7 +115,7 @@ const addEmployee = () => {
                             const manager = answers.manager;
                             console.log(first, last, role, manager);
                             const addEmployeeQuery = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
-              VALUES ('${first}', '${last}', ${role}, ${manager})`;
+                             VALUES ('${first}', '${last}', ${role}, ${manager})`;
                             db.query(addEmployeeQuery, async function (err, results) {
                                 if (err) {
                                     console.log(err);
@@ -116,6 +145,7 @@ const viewAllRoles = async () => {
             }
         });
     });
+    console.log('');
     console.table(data);
     initialPrompt();
 };
@@ -134,6 +164,7 @@ const viewAllDepartments = async () => {
             }
         });
     });
+    console.log('');
     console.table(data);
     initialPrompt();
 };
@@ -162,7 +193,7 @@ const initialPrompt = () => {
             const answer = answers.initialPrompt;
             switch (answer) {
                 case 'View All Employees':
-                    // viewAllEmployees();
+                    viewAllEmployees();
                     break;
                 case 'Add Employee':
                     addEmployee();
