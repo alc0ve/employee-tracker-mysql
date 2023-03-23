@@ -122,8 +122,7 @@ const addEmployee = () => {
 const updateEmployeeRole = () => {
     //get id and and name from employees; choose what employee's role will be updated
     db.query(`SELECT id as "Employee ID",
-    employees.first_name AS 'First Name', 
-    employees.last_name AS 'Last Name' FROM employees`, (err, results) => {
+    employees.first_name, employees.last_name FROM employees`, (err, results) => {
         if (err) {
             console.log(err);
         } else {
@@ -134,7 +133,7 @@ const updateEmployeeRole = () => {
                     name: obj.first_name + ' ' + obj.last_name
                 };
             });
-            // console.log(empQueryArray);
+            console.log(empQueryArray);
             //query to get roles to choose to update to; need id and role title
             db.query(`SELECT id, title FROM roles`, async (err, results) => {
                 if (err) {
@@ -146,7 +145,7 @@ const updateEmployeeRole = () => {
                             name: obj.title
                         };
                     });
-                    // console.log(roleQueryArray);
+                    console.log(roleQueryArray);
                     await inquirer.prompt([
                         {
                             type: 'list',
