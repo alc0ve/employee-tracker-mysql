@@ -101,24 +101,86 @@ const addEmployee = () => {
                             // console.log(first, last, role, manager);
                             const addEmployeeQuery = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
                              VALUES ('${first}', '${last}', ${role}, ${manager})`;
-                            db.query(addEmployeeQuery, function (err, results) {
+                            db.query(addEmployeeQuery, (err, results) => {
                                 if (err) {
                                     console.log(err);
                                 } else {
                                     console.log('');
                                     console.log('EMPLOYEE ADDED'.bold.brightCyan);
                                     console.log('');
-                                }
+                                };
                             });
                             initialPrompt();
                         });
-                }
+                };
             });
-        }
+        };
     });
 }
 
 //Update Employee Role
+const updateEmployeeRole = () => {
+    //get id and and name from employees; choose what employee's role will be updated
+    db.query(`SELECT id as "Employee ID",
+    employees.first_name AS 'First Name', 
+    employees.last_name AS 'Last Name' FROM employees`, (err, results) => {
+        if (err) {
+            console.log(err);
+        } else {
+            let empQueryArray = results.map((obj) => {
+                return {
+                    //taking values from query and renaming the keys
+                    value: obj.id,
+                    name: obj.first_name + ' ' + obj.last_name
+                };
+            });
+            // console.log(empQueryArray);
+            //query to get roles to choose to update to; need id and role title
+            db.query(`SELECT id, title FROM roles`, async (err, results) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    let roleQueryArray = results.map((obj) => {
+                        return {
+                            value: obj.id,
+                            name: obj.title
+                        };
+                    });
+                    // console.log(roleQueryArray);
+                    await inquirer.prompt([
+                        {
+                            type: 'list',
+                            name: 'employeeName',
+                            message: `Which employee's role do you want to update?`,
+                            choices: empQueryArray,
+                          },
+                          {
+                            type: 'list',
+                            name: 'roleName',
+                            message: 'Which role do you want to assign the selected employee?',
+                            choices: roleQueryArray,
+                          },
+                    ])
+                    .then((answers) => {
+                        const empName = answers.employeeName;
+                        const roleName = answers.roleName;
+        
+                        db.query(`UPDATE employees SET role_id = ${roleName} WHERE id = ${empName}`, (err, results) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log('');
+                                console.log('EMPLOYEE ROLE UPDATED'.bold.brightCyan);
+                                console.log('');
+                            };
+                        });
+                        initialPrompt();
+                    });
+                };
+            });
+        };
+    });
+}
 
 //View All Roles
 const viewAllRoles = async () => {
@@ -271,6 +333,7 @@ const initialPrompt = () => {
                     addEmployee();
                     break;
                 case 'Update Employee Role':
+                    updateEmployeeRole();
                     break;
                 case 'View All Roles':
                     viewAllRoles();
@@ -287,6 +350,7 @@ const initialPrompt = () => {
                 default:
                     //disconnects database connection
                     db.end();
+                    //function to show Bye
                     quit();
                     //terminates node
                     process.exit();
@@ -298,7 +362,7 @@ const initialPrompt = () => {
 //header of app with app start function called
 db.connect((err) => {
     if (err) {
-      throw err;
+      console.log(err);
     }
     console.log(
       colors.gray(
@@ -306,8 +370,8 @@ db.connect((err) => {
       )
     );
     console.log(``);
-    console.log(colors.rainbow(figlet.textSync('            Employee')));
-    console.log(colors.rainbow(figlet.textSync('                Manager')));
+    console.log(colors.gray(figlet.textSync('            Employee')));
+    console.log(colors.gray(figlet.textSync('                Manager')));
     console.log(``);
     console.log(
       colors.gray(
