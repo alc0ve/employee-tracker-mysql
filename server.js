@@ -132,7 +132,7 @@ const updateEmployeeRole = () => {
                     name: obj.first_name + ' ' + obj.last_name
                 };
             });
-            console.log(empQueryArray);
+            // console.log(empQueryArray);
             //query to get roles to choose to update to; need id and role title
             db.query(`SELECT id, title FROM roles`, async (err, results) => {
                 if (err) {
