@@ -48,6 +48,7 @@ II. Make any edits on the backend before initializing:
 ## Usage
 
 To utilize this application, follow the installation steps above. Once completed, open the terminal to start the application with command: node server
+
 When the user is finished, select Quit option to end the running of the application.
 
 ## Technologies
