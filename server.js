@@ -213,7 +213,7 @@ const addRole = () => {
                     name: obj.dep_name
                 };
             });
-            console.log(deptArray);
+            // console.log(deptArray);
             //prompts for adding role
             await inquirer.prompt([
                 {
