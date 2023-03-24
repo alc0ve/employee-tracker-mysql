@@ -3,7 +3,7 @@ const mySQL = require('mysql2');
 const cTable = require('console.table');
 const colors = require('colors');
 const figlet = require('figlet');
-const { query } = require('./config/connection');
+// const { query } = require('./config/connection');
 const db = require('./config/connection');
 
 //View All Employees
